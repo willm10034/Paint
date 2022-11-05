@@ -1,11 +1,10 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from PIL import Image
+from PIL import Image, ImageFilter
 import sys
 import numpy as np
 import cv2
-
 
 # window class
 class Window(QMainWindow):
@@ -52,6 +51,44 @@ class Window(QMainWindow):
 
         editMenu = mainMenu.addMenu("Edit")
 
+        filtMenu = mainMenu.addMenu("Filter")
+
+        blurAction = QAction("Blur", self)
+        filtMenu.addAction(blurAction)
+        blurAction.triggered.connect(self.blur)
+
+        contourAction = QAction("Contour", self)
+        filtMenu.addAction(contourAction)
+        contourAction.triggered.connect(self.contour)
+
+        edge_enhanceAction = QAction("Edge Enhance", self)
+        filtMenu.addAction(edge_enhanceAction)
+        edge_enhanceAction.triggered.connect(self.edge_enhance)
+
+        edge_enhance_moreAction = QAction("Edge Enhance More", self)
+        filtMenu.addAction(edge_enhance_moreAction)
+        edge_enhance_moreAction.triggered.connect(self.edge_enhance_more)
+
+        embossAction = QAction("Emboss", self)
+        filtMenu.addAction(embossAction)
+        embossAction.triggered.connect(self.emboss)
+
+        find_edgesAction = QAction("Find Edges", self)
+        filtMenu.addAction(find_edgesAction)
+        find_edgesAction.triggered.connect(self.find_edges)
+
+        sharpenAction = QAction("Sharpen", self)
+        filtMenu.addAction(sharpenAction)
+        sharpenAction.triggered.connect(self.sharpen)
+
+        smoothAction = QAction("Smooth", self)
+        filtMenu.addAction(smoothAction)
+        smoothAction.triggered.connect(self.smooth)
+
+        smooth_moreAction = QAction("Smooth More", self)
+        filtMenu.addAction(smooth_moreAction)
+        smooth_moreAction.triggered.connect(self.smooth_more)
+
         # creating open action
         openAction = QAction("Open", self)
         openAction.setShortcut("Ctrl + O")
@@ -87,6 +124,96 @@ class Window(QMainWindow):
         cv2.rectangle(self.img, (601, 1), (632, 33), (255, 255, 255), 1)  # brush outline
         cv2.rectangle(self.img, (511, 1), (525, 99), (0, 225, 255), 2)  # line weight outline
         cv2.imshow('tools', self.img)
+
+    def blur(self):
+        self.undo_index = 0
+        self.undo_levels += 1
+        self.undo_stack.append(self.image.copy())
+        self.image.save('tmp.jpg')
+        image = Image.open('tmp.jpg')
+        filtered = image.filter(ImageFilter.GaussianBlur(radius=7))
+        tmp = np.array(filtered)
+        self.image = QImage(tmp, tmp.shape[1], tmp.shape[0], QImage.Format_RGB888)
+
+    def contour(self):
+        self.undo_index = 0
+        self.undo_levels += 1
+        self.undo_stack.append(self.image.copy())
+        self.image.save('tmp.jpg')
+        image = Image.open('tmp.jpg')
+        filtered = image.filter(ImageFilter.CONTOUR)
+        tmp = np.array(filtered)
+        self.image = QImage(tmp, tmp.shape[1], tmp.shape[0], QImage.Format_RGB888)
+
+    def edge_enhance(self):
+        self.undo_index = 0
+        self.undo_levels += 1
+        self.undo_stack.append(self.image.copy())
+        self.image.save('tmp.jpg')
+        image = Image.open('tmp.jpg')
+        filtered = image.filter(ImageFilter.EDGE_ENHANCE)
+        tmp = np.array(filtered)
+        self.image = QImage(tmp, tmp.shape[1], tmp.shape[0], QImage.Format_RGB888)
+
+    def edge_enhance_more(self):
+        self.undo_index = 0
+        self.undo_levels += 1
+        self.undo_stack.append(self.image.copy())
+        self.image.save('tmp.jpg')
+        image = Image.open('tmp.jpg')
+        filtered = image.filter(ImageFilter.EDGE_ENHANCE_MORE)
+        tmp = np.array(filtered)
+        self.image = QImage(tmp, tmp.shape[1], tmp.shape[0], QImage.Format_RGB888)
+
+    def emboss(self):
+        self.undo_index = 0
+        self.undo_levels += 1
+        self.undo_stack.append(self.image.copy())
+        self.image.save('tmp.jpg')
+        image = Image.open('tmp.jpg')
+        filtered = image.filter(ImageFilter.EMBOSS)
+        tmp = np.array(filtered)
+        self.image = QImage(tmp, tmp.shape[1], tmp.shape[0], QImage.Format_RGB888)
+
+    def find_edges(self):
+        self.undo_index = 0
+        self.undo_levels += 1
+        self.undo_stack.append(self.image.copy())
+        self.image.save('tmp.jpg')
+        image = Image.open('tmp.jpg')
+        filtered = image.filter(ImageFilter.FIND_EDGES)
+        tmp = np.array(filtered)
+        self.image = QImage(tmp, tmp.shape[1], tmp.shape[0], QImage.Format_RGB888)
+
+    def sharpen(self):
+        self.undo_index = 0
+        self.undo_levels += 1
+        self.undo_stack.append(self.image.copy())
+        self.image.save('tmp.jpg')
+        image = Image.open('tmp.jpg')
+        filtered = image.filter(ImageFilter.SHARPEN)
+        tmp = np.array(filtered)
+        self.image = QImage(tmp, tmp.shape[1], tmp.shape[0], QImage.Format_RGB888)
+
+    def smooth(self):
+        self.undo_index = 0
+        self.undo_levels += 1
+        self.undo_stack.append(self.image.copy())
+        self.image.save('tmp.jpg')
+        image = Image.open('tmp.jpg')
+        filtered = image.filter(ImageFilter.SMOOTH)
+        tmp = np.array(filtered)
+        self.image = QImage(tmp, tmp.shape[1], tmp.shape[0], QImage.Format_RGB888)
+
+    def smooth_more(self):
+        self.undo_index = 0
+        self.undo_levels += 1
+        self.undo_stack.append(self.image.copy())
+        self.image.save('tmp.jpg')
+        image = Image.open('tmp.jpg')
+        filtered = image.filter(ImageFilter.SMOOTH_MORE)
+        tmp = np.array(filtered)
+        self.image = QImage(tmp, tmp.shape[1], tmp.shape[0], QImage.Format_RGB888)
 
     def select_color(self, event, x, y, flags, param):
         if event == 4:  # mouse click
